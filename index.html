@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>img2ascii — image to ASCII art</title>
+  <meta name="description" content="Turn any image into ASCII art in your browser. Mono or color, export to PNG, TXT or HTML.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Pixelify+Sans:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header class="topbar">
+    <a class="logo" href="#">img2<span>ascii</span></a>
+    <div class="topbar-right">
+      <span class="status-dot" id="statusDot"></span>
+      <span class="mono dim" id="statusText">idle</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+
+    <!-- Hero -->
+    <section class="panel hero">
+      <div class="panel-head">
+        <span class="path">~$ landing/readme.txt</span>
+        <span class="tag">Client-side</span>
+      </div>
+      <div class="panel-body hero-body">
+        <p class="eyebrow">IMG2ASCII // WEB</p>
+        <h1>Turn any image into <span class="pixel">ASCII.</span></h1>
+        <p class="lead">Drop a picture, tune it, export it. Everything runs in your browser — nothing gets uploaded anywhere.</p>
+        <div class="hero-actions">
+          <label class="btn btn-primary" for="fileInput">Upload image →</label>
+          <button class="btn btn-ghost" id="demoBtn" type="button">Try demo →</button>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden>
+      </div>
+    </section>
+
+    <div class="workspace">
+
+      <!-- Settings -->
+      <aside class="panel settings">
+        <div class="panel-head">
+          <span class="path">~$ config/settings.cfg</span>
+          <span class="tag">Live</span>
+        </div>
+        <div class="panel-body">
+
+          <div class="field">
+            <div class="field-label"><span>Width</span><output id="colsOut">120 cols</output></div>
+            <input type="range" id="cols" min="20" max="300" value="120">
+          </div>
+
+          <div class="field">
+            <div class="field-label"><span>Charset</span></div>
+            <select id="charset">
+              <option value="standard">Standard  ·:-=+*#%@</option>
+              <option value="detailed">Detailed (70 chars)</option>
+              <option value="blocks">Blocks  ░▒▓█</option>
+              <option value="classic">Classic v1  .-~:+!*#$@</option>
+              <option value="binary">Binary  01</option>
+              <option value="custom">Custom…</option>
+            </select>
+            <input type="text" id="customChars" class="text-input hidden" placeholder="from light to dense, e.g.  .oO@" spellcheck="false">
+          </div>
+
+          <div class="field">
+            <div class="field-label"><span>Color</span></div>
+            <div class="segmented" id="colorMode">
+              <button type="button" data-value="mono" class="active">Mono</button>
+              <button type="button" data-value="color">Color</button>
+              <button type="button" data-value="tint">Tint</button>
+            </div>
+            <div class="tint-row hidden" id="tintRow">
+              <input type="color" id="tint" value="#7CFF6B">
+              <span class="mono dim" id="tintHex">#7CFF6B</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><span>Background</span></div>
+            <div class="segmented" id="bgMode">
+              <button type="button" data-value="dark" class="active">Dark</button>
+              <button type="button" data-value="light">Light</button>
+              <button type="button" data-value="none">None</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="field-label"><span>Brightness</span><output id="brightOut">0</output></div>
+            <input type="range" id="bright" min="-100" max="100" value="0">
+          </div>
+
+          <div class="field">
+            <div class="field-label"><span>Contrast</span><output id="contrastOut">0</output></div>
+            <input type="range" id="contrast" min="-100" max="100" value="0">
+          </div>
+
+          <div class="field">
+            <div class="field-label"><span>Font size</span><output id="fontOut">12 px</output></div>
+            <input type="range" id="fontSize" min="6" max="24" value="12">
+          </div>
+
+          <label class="toggle">
+            <input type="checkbox" id="invert">
+            <span class="toggle-ui"></span>
+            <span>Invert</span>
+          </label>
+
+          <button class="btn btn-ghost btn-small full" id="resetBtn" type="button">Reset settings</button>
+        </div>
+      </aside>
+
+      <!-- Output -->
+      <section class="panel output">
+        <div class="panel-head">
+          <span class="path" id="outPath">~$ output/preview.png</span>
+          <span class="tag" id="outTag">Waiting</span>
+        </div>
+
+        <div class="panel-body output-body">
+          <div class="dropzone" id="dropzone">
+            <div class="drop-inner">
+              <p class="pixel drop-title">Drop image here</p>
+              <p class="dim">or click to choose · or paste with Ctrl+V</p>
+              <p class="mono dim small">PNG · JPG · WEBP · GIF</p>
+            </div>
+          </div>
+          <div class="canvas-wrap hidden" id="canvasWrap">
+            <canvas id="canvas"></canvas>
+          </div>
+        </div>
+
+        <div class="stats">
+          <div class="stat"><span class="stat-label">Cols</span><span class="stat-value" id="statCols">—</span></div>
+          <div class="stat"><span class="stat-label">Rows</span><span class="stat-value" id="statRows">—</span></div>
+          <div class="stat"><span class="stat-label">Chars</span><span class="stat-value" id="statChars">—</span></div>
+          <div class="stat"><span class="stat-label">Size</span><span class="stat-value" id="statSize">—</span></div>
+        </div>
+
+        <div class="export">
+          <span class="path">~$ export/</span>
+          <div class="export-buttons">
+            <button class="btn btn-primary btn-small" data-export="png" disabled>PNG</button>
+            <button class="btn btn-ghost btn-small" data-export="txt" disabled>TXT</button>
+            <button class="btn btn-ghost btn-small" data-export="html" disabled>HTML</button>
+            <button class="btn btn-ghost btn-small" data-export="copy" disabled>Copy text</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span class="mono dim">img2ascii · made by Olzhas Ashimov</span>
+    <span class="mono dim">v2.0 — the C# console version grew up</span>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

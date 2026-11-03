@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>img2ascii — image to ASCII art</title>
-  <meta name="description" content="Turn any image into ASCII art in your browser. Mono or color, export to PNG, TXT or HTML.">
+  <meta name="description" content="Turn any image, GIF or video into ASCII art in your browser. Mono or color, export to PNG, TXT, HTML, GIF or WebM.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&family=Pixelify+Sans:wght@400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -31,12 +31,12 @@
       <div class="panel-body hero-body">
         <p class="eyebrow">IMG2ASCII // WEB</p>
         <h1>Turn any image into <span class="pixel">ASCII.</span></h1>
-        <p class="lead">Drop a picture, tune it, export it. Everything runs in your browser — nothing gets uploaded anywhere.</p>
+        <p class="lead">Drop a picture, a GIF or a video, tune it, export it. Everything runs in your browser — nothing gets uploaded anywhere.</p>
         <div class="hero-actions">
-          <label class="btn btn-primary" for="fileInput">Upload image →</label>
+          <label class="btn btn-primary" for="fileInput">Upload file →</label>
           <button class="btn btn-ghost" id="demoBtn" type="button">Try demo →</button>
         </div>
-        <input type="file" id="fileInput" accept="image/*" hidden>
+        <input type="file" id="fileInput" accept="image/*,video/*" hidden>
       </div>
     </section>
 
@@ -48,7 +48,7 @@
           <span class="path">~$ config/settings.cfg</span>
           <span class="tag">Live</span>
         </div>
-        <div class="panel-body">
+        <fieldset class="panel-body" id="settingsFields">
 
           <div class="field">
             <div class="field-label"><span>Width</span><output id="colsOut">120 cols</output></div>
@@ -112,7 +112,7 @@
           </label>
 
           <button class="btn btn-ghost btn-small full" id="resetBtn" type="button">Reset settings</button>
-        </div>
+        </fieldset>
       </aside>
 
       <!-- Output -->
@@ -127,12 +127,18 @@
             <div class="drop-inner">
               <p class="pixel drop-title">Drop image here</p>
               <p class="dim">or click to choose · or paste with Ctrl+V</p>
-              <p class="mono dim small">PNG · JPG · WEBP · GIF</p>
+              <p class="mono dim small">PNG · JPG · WEBP · GIF · MP4 · WEBM</p>
             </div>
           </div>
           <div class="canvas-wrap hidden" id="canvasWrap">
             <canvas id="canvas"></canvas>
           </div>
+        </div>
+
+        <div class="player hidden" id="playerBar">
+          <button class="btn btn-ghost btn-small play-btn" id="playBtn" type="button" aria-label="Pause">❚❚</button>
+          <input type="range" id="seek" min="0" max="1000" step="1" value="0" aria-label="Seek">
+          <span class="mono dim small time-text" id="timeText">0:00.0 / 0:00.0</span>
         </div>
 
         <div class="stats">
@@ -149,6 +155,8 @@
             <button class="btn btn-ghost btn-small" data-export="txt" disabled>TXT</button>
             <button class="btn btn-ghost btn-small" data-export="html" disabled>HTML</button>
             <button class="btn btn-ghost btn-small" data-export="copy" disabled>Copy text</button>
+            <button class="btn btn-ghost btn-small" data-export="gif" data-anim disabled>GIF</button>
+            <button class="btn btn-ghost btn-small" data-export="webm" data-anim disabled>WebM</button>
           </div>
         </div>
       </section>
@@ -157,11 +165,12 @@
 
   <footer class="footer">
     <span class="mono dim">img2ascii · made by Olzhas Ashimov</span>
-    <span class="mono dim">v2.0 — the C# console version grew up</span>
+    <span class="mono dim">v2.1 — now with GIFs and video</span>
   </footer>
 
   <div class="toast" id="toast"></div>
 
+  <script src="gif.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

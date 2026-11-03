@@ -139,7 +139,29 @@ body {
 .panel-body { padding: 20px 18px; }
 
 /* ===== Hero ===== */
-.hero-body { padding: 36px 32px 34px; }
+.hero-body { padding: 36px 32px 34px; position: relative; overflow: hidden; }
+.hero-body > :not(.hero-art) { position: relative; z-index: 1; }
+
+/* animated ASCII art on the right; "screen" blending makes its black background disappear */
+.hero-art {
+  position: absolute;
+  top: 0; right: 0;
+  height: 100%;
+  width: min(62%, 720px);
+  object-fit: cover;
+  object-position: center;
+  opacity: .7;
+  mix-blend-mode: screen;
+  pointer-events: none;
+  user-select: none;
+  /* fades out towards the headline so the text stays readable */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 45%);
+  mask-image: linear-gradient(to right, transparent, #000 45%);
+}
+
+@media (max-width: 760px) {
+  .hero-art { width: 100%; opacity: .3; }
+}
 
 .eyebrow {
   font-family: var(--font-mono);

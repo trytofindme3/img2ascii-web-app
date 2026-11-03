@@ -1,0 +1,13 @@
+# The site is plain HTML/CSS/JS — nothing to build.
+# The only "build" step puts the real site address into the link-preview tags
+# (preview images need a full URL). Netlify provides it in $URL — your custom
+# domain once you add one, otherwise https://<name>.netlify.app.
+[build]
+  publish = "."
+  command = "sed -i \"s#__SITE_URL__#${URL}#g\" index.html"
+
+# Cache images and icons for a week; HTML/JS/CSS are always revalidated so updates show up right away
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
